@@ -9,9 +9,11 @@ interface TableProps {
   columns: Array<{ key: string; label: string }>;
   data: TableData;
   isLoading?: boolean;
+  page?: number;
+  search?: string;
 }
 
-const Table: React.FC<TableProps> = ({ columns, data, isLoading }) => {
+const Table: React.FC<TableProps> = ({ columns, data, isLoading, page, search: searchValue }) => {
   const [finalData, setFinalData] = useState<TableData>([]);
   const [tableData, setTableData] = useState<TableData>([]);
   const [isAscending, setIsAscending] = useState<boolean>(false);
@@ -37,9 +39,35 @@ const Table: React.FC<TableProps> = ({ columns, data, isLoading }) => {
 
     // set number of pages
     setNumberOfPages(Math.ceil(filteredData.length / rowsPerPage));
-    // set table data
-    setTableData(filteredData.slice(0, rowsPerPage));
-  }, [columns, data, rowsPerPage]);
+
+    if (page) {
+      setCurrentPage(page);
+      // set table data based on page
+      const startIndex = (page - 1) * rowsPerPage;
+      const endIndex = startIndex + rowsPerPage;
+      setTableData(filteredData.slice(startIndex, endIndex));
+    } else {
+      // set table data
+      setTableData(filteredData.slice(0, rowsPerPage));
+    }
+  }, [columns, data, page, rowsPerPage]);
+
+  useEffect(() => {
+    if (finalData.length === 0) return;
+    // set number of pages
+    setSearch(searchValue || "");
+    if (searchValue) {
+      onChangeSearch({ target: { value: searchValue || "" } } as React.ChangeEvent<HTMLInputElement>);
+      if (page) {
+        setCurrentPage(page);
+        // set table data based on page
+        const startIndex = (page - 1) * rowsPerPage;
+        const endIndex = startIndex + rowsPerPage;
+        setTableData(searchData.slice(startIndex, endIndex));
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchValue, finalData]);
 
   const onClickHeader = (key: string) => {
     let direction = isAscending ? "descending" : "ascending";
@@ -147,7 +175,13 @@ const Table: React.FC<TableProps> = ({ columns, data, isLoading }) => {
 
   return (
     <div className="sp-container">
-      <input type="text" placeholder="Search..." onChange={onChangeSearch} className="sp-search"/>
+      <input
+        type="text"
+        placeholder="Search..."
+        onChange={onChangeSearch}
+        className="sp-search"
+        defaultValue={searchValue}
+      />
       <table className="sp-table" border={0} cellSpacing={0}>
         <thead>
           <tr>
@@ -158,7 +192,8 @@ const Table: React.FC<TableProps> = ({ columns, data, isLoading }) => {
                 onClick={() => onClickHeader(column.key)}
                 style={{ cursor: "pointer" }}
               >
-                {column.label} {sortKey === column.key && isAscending && "▲"} {sortKey === column.key && !isAscending && "▼"}
+                {column.label} {sortKey === column.key && isAscending && "▲"}{" "}
+                {sortKey === column.key && !isAscending && "▼"}
               </th>
             ))}
           </tr>
@@ -216,7 +251,7 @@ const Table: React.FC<TableProps> = ({ columns, data, isLoading }) => {
         <div className="sp-result">
           {/* show json of selected data */}
           <h3>Result:</h3>
-          <pre>{JSON.stringify(selectedRows, null, 2)}</pre>
+          <pre>{JSON.stringify({ products: selectedRows }, null, 2)}</pre>
         </div>
       )}
     </div>

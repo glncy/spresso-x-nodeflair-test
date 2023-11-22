@@ -17,6 +17,11 @@ interface Column {
 }
 
 function App() {
+  // get query params
+  const urlParams = new URLSearchParams(window.location.search);
+  const page = urlParams.get("page");
+  const search = urlParams.get("search");
+
   const [products, setProducts] = useState<Array<Product>>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const columns: Array<Column> = [
@@ -63,6 +68,8 @@ function App() {
         columns={columns}
         data={products as unknown as TableData}
         isLoading={isLoading}
+        page={page ? parseInt(page) : undefined}
+        search={search ? search : undefined}
       />
     </div>
   );
