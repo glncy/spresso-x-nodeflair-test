@@ -1,0 +1,53 @@
+.sp-container {
+  padding: 10px;
+  width: 80%;
+}
+
+.sp-search {
+  padding: 10px;
+  width: 50%;
+}
+
+.sp-table {
+  width: 100%;
+}
+
+@media (prefers-color-scheme: light) {
+  table > thead > tr > th {
+    border-bottom: 1px solid #2e2e2e;
+  }
+
+  table > tbody > tr > td {
+    border-bottom: 1px solid #2e2e2e;
+  }
+}
+
+table > thead > tr > th {
+  text-align: center;
+  padding: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+table > tbody > tr > td {
+  text-align: center;
+  padding: 8px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.sp-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.sp-pagination > span {
+  margin-left: 8px;
+  margin-right: 8px;
+}
+
+.sp-result {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
